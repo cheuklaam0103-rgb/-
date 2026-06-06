@@ -454,7 +454,7 @@
                     
                     {/* 右上角高識別度靜音開關 */}
                     <button onClick={toggleMute} class="absolute top-4 right-4 z-50 bg-slate-950/80 p-3 rounded-full border-2 border-amber-400 active:scale-90 text-xl shadow-lg">
-                        {isMuted ? '🔇 靜音模式' : '🎵 音樂播放中 (已調小聲)'}
+                        {isMuted ? '🔇 靜音模式' : '🎵 音樂播放中'}
                     </button>
 
                     {/* 開始畫面 */}
