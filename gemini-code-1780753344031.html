@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox 同音字特訓挑戰</title>
+    <!-- React & ReactDOM -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel for JSX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 2s infinite ease-in-out; }
+    </style>
+</head>
+<body class="bg-slate-900 min-h-screen flex items-center justify-center font-sans p-0 m-0 select-none">
+
+    <div id="root" class="w-full max-w-[500px] h-screen max-h-[850px] md:h-[800px] bg-slate-800 shadow-2xl relative overflow-hidden md:rounded-3xl flex flex-col border-4 border-amber-400"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Roblox 核心純代碼角色與組件繪製組件 (確保完全本地化顯示，絕不破圖) ---
+        const RobloxAvatar = ({ type, size = "w-24 h-24" }) => {
+            if (type === 'noob-teacher') {
+                return (
+                    <div class={`${size} bg-slate-700 rounded-xl flex flex-col items-center justify-center relative border-2 border-slate-600 p-2 shadow-md`}>
+                        {/* 經典 Noob 黃色頭 */}
+                        <div class="w-10 h-10 bg-amber-300 rounded-md relative flex flex-col items-center justify-center">
+                            <div class="flex gap-2 mb-1"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-5 h-1.5 bg-slate-900 rounded-full"></div>
+                        </div>
+                        {/* 綠色衣服 + 領帶(代表老師) */}
+                        <div class="w-14 h-10 bg-emerald-500 rounded-t-md relative mt-1 flex justify-center">
+                            <div class="w-2 h-6 bg-amber-400 absolute top-0"></div>
+                        </div>
+                    </div>
+                );
+            }
+            if (type === 'noob-lion') {
+                return (
+                    <div class={`${size} bg-slate-700 rounded-xl flex flex-col items-center justify-center relative border-2 border-slate-600 p-2 shadow-md`}>
+                        {/* 獅子寵物頭像帽子 */}
+                        <div class="w-14 h-14 bg-orange-500 rounded-full relative flex items-center justify-center border-2 border-orange-600 shadow-inner">
+                            <div class="absolute -top-1 -left-1 w-4 h-4 bg-orange-700 rounded-full"></div>
+                            <div class="absolute -top-1 -right-1 w-4 h-4 bg-orange-700 rounded-full"></div>
+                            <div class="w-8 h-8 bg-amber-300 rounded-full flex flex-col items-center justify-center">
+                                <div class="flex gap-1.5 mb-1"><div class="w-1 h-1 bg-slate-900 rounded-full"></div><div class="w-1 h-1 bg-slate-900 rounded-full"></div></div>
+                                <div class="w-3 h-1 bg-slate-900 rounded-full"></div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-orange-300 font-bold mt-1">Roblox 獅子獸</div>
+                    </div>
+                );
+            }
+            if (type === 'noob-blue') {
+                return (
+                    <div class={`${size} bg-slate-700 rounded-xl flex flex-col items-center justify-center relative border-2 border-slate-600 p-2 shadow-md`}>
+                        <div class="w-10 h-10 bg-amber-300 rounded-md flex flex-col items-center justify-center">
+                            <div class="flex gap-2 mb-1"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-5 h-1.5 bg-slate-900 rounded-full"></div>
+                        </div>
+                        {/* 經典純藍色方塊衣服 */}
+                        <div class="w-14 h-10 bg-blue-500 rounded-t-md mt-1 border border-blue-400"></div>
+                    </div>
+                );
+            }
+            if (type === 'noob-boy') {
+                return (
+                    <div class={`${size} bg-slate-700 rounded-xl flex flex-col items-center justify-center relative border-2 border-slate-600 p-2 shadow-md`}>
+                        {/* 帶有棒球帽的 Roblox 男孩 */}
+                        <div class="w-10 h-10 bg-amber-300 rounded-md relative flex flex-col items-center justify-center">
+                            <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-12 h-4 bg-red-600 rounded-t-full"></div>
+                            <div class="flex gap-2 mb-1 z-10"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+                            <div class="w-4 h-1 bg-slate-900 rounded-full z-10"></div>
+                        </div>
+                        <div class="w-14 h-10 bg-slate-600 rounded-t-md mt-1"></div>
+                    </div>
+                );
+            }
+            if (type === 'roblox-brain') {
+                return (
+                    <div class={`${size} bg-slate-700 rounded-xl flex flex-col items-center justify-center relative border-2 border-slate-600 p-2 shadow-md`}>
+                        <div class="w-12 h-10 bg-pink-400 rounded-full border-2 border-pink-500 flex items-center justify-center shadow-lg">
+                            <div class="w-6 h-6 border-r-2 border-pink-600/50"></div>
+                        </div>
+                        <div class="text-[10px] text-pink-300 font-bold mt-2">我知道點玩喇</div>
+                    </div>
+                );
+            }
+            if (type === 'roblox-arrow') {
+                return (
+                    <div class={`${size} bg-slate-700 rounded-xl flex flex-col items-center justify-center relative border-2 border-slate-600 p-2 shadow-md`}>
+                        {/* 橫向長箭武器 */}
+                        <div class="w-16 h-2 bg-amber-600 relative rounded-sm">
+                            <div class="absolute -right-2 -top-1.5 w-0 h-0 border-t-4 border-b-4 border-l-8 border-transparent border-l-red-500"></div>
+                            <div class="absolute -left-1 -top-1 w-2 h-4 bg-slate-400 rounded-sm"></div>
+                        </div>
+                        <div class="text-[10px] text-amber-400 font-bold mt-3">一支部隊/武器</div>
+                    </div>
+                );
+            }
+            if (type === 'roblox-key') {
+                return (
+                    <div class={`${size} bg-slate-700 rounded-xl flex flex-col items-center justify-center relative border-2 border-slate-600 p-2 shadow-md`}>
+                        <div class="w-6 h-6 rounded-full border-4 border-amber-400"></div>
+                        <div class="w-2 h-6 bg-amber-400 -mt-1 relative">
+                            <div class="w-3 h-1.5 bg-amber-400 absolute bottom-1 left-1"></div>
+                            <div class="w-3 h-1.5 bg-amber-400 absolute bottom-3 left-1"></div>
+                        </div>
+                    </div>
+                );
+            }
+            if (type === 'roblox-happy') {
+                return (
+                    <div class={`${size} bg-slate-700 rounded-xl flex flex-col items-center justify-center relative border-2 border-slate-600 p-2 shadow-md`}>
+                        {/* 開心拍手歡欣模型 */}
+                        <div class="w-10 h-10 bg-amber-300 rounded-md flex flex-col items-center justify-center border border-amber-400">
+                            <div class="flex gap-2 mb-1"><div class="text-[8px]">⭐</div><div class="text-[8px]">⭐</div></div>
+                            <div class="w-5 h-3 border-b-2 border-slate-900 rounded-b-full"></div>
+                        </div>
+                        <div class="text-[10px] text-yellow-300 font-bold mt-2">拍手欣賞人哋</div>
+                    </div>
+                );
+            }
+            return <div class={`${size} bg-slate-600 rounded-xl`}></div>;
+        };
+
+        // --- 完整 8 題題庫 ---
+        const QUESTION_POOL = [
+            {
+                id: 1,
+                audioText: '邊個係老師個師呀？',
+                questionText: 'Roblox 學校裡面的「zi1 師」是哪一個字？',
+                robloxContext: '👨‍🏫 學校場景：教導新手玩家的老師。',
+                avatarType: 'noob-teacher',
+                options: [
+                    { text: '師', detail: '👨‍🏫 老師 / 遊戲導師', isCorrect: true, bg: 'from-emerald-600 to-teal-700' },
+                    { text: '獅', detail: '🦁 獅子寵物道具', isCorrect: false, bg: 'from-rose-600 to-red-700' }
+                ],
+                hint: '提示：教你起屋、教你玩關卡嗰個「老師」。'
+            },
+            {
+                id: 2,
+                audioText: '邊個係獅子個獅呀？',
+                questionText: '在商店買一隻會咆哮的「zi1 獅」子寵物：',
+                robloxContext: '🦁 寵物店：這隻金黃色大鬃毛的動物！',
+                avatarType: 'noob-lion',
+                options: [
+                    { text: '師', detail: '👨‍🏫 學校導師', isCorrect: false, bg: 'from-rose-600 to-red-700' },
+                    { text: '獅', detail: '🦁 大獅子獸寵物', isCorrect: true, bg: 'from-emerald-600 to-teal-700' }
+                ],
+                hint: '提示：野生動物、會「吼」一聲大叫嘅金黃色獅子。'
+            },
+            {
+                id: 3,
+                audioText: '邊個係藍色個藍呀？',
+                questionText: '穿上大廳經典新手造型的「laam4 藍」色衫：',
+                robloxContext: '🟦 皮膚更換：像晴朗天空一樣的方塊上衣！',
+                avatarType: 'noob-blue',
+                options: [
+                    { text: '男', detail: '👦 男仔角色 / 兄弟', isCorrect: false, bg: 'from-rose-600 to-red-700' },
+                    { text: '藍', detail: '🟦 藍色皮膚 / 藍天', isCorrect: true, bg: 'from-emerald-600 to-teal-700' }
+                ],
+                hint: '提示：好似海水、好似防護罩顏色咁樣嘅「藍色」。'
+            },
+            {
+                id: 4,
+                audioText: '邊個係男仔個男呀？',
+                questionText: '在冒險地圖中，跟隊伍裡的「laam4 男」生玩家組隊：',
+                robloxContext: '👦 組隊大廳：你的男性朋友或兄弟！',
+                avatarType: 'noob-boy',
+                options: [
+                    { text: '男', detail: '👦 男仔 / 爸爸 / 哥哥', isCorrect: true, bg: 'from-emerald-600 to-teal-700' },
+                    { text: '藍', detail: '🟦 藍色方塊套裝', isCorrect: false, bg: 'from-rose-600 to-red-700' }
+                ],
+                hint: '提示：代表男仔、叔叔、哥哥，同女仔相對應。'
+            },
+            {
+                id: 5,
+                audioText: '邊個係知道個知呀？',
+                questionText: '玩家看完了攻略大喊：「我 zi1 道點樣過關喇！」',
+                robloxContext: '🧠 腦袋開光：我明白、我知道點解密喇！',
+                avatarType: 'roblox-brain',
+                options: [
+                    { text: '知', detail: '🧠 知道 / 明白 / 了解', isCorrect: true, bg: 'from-emerald-600 to-teal-700' },
+                    { text: '支', detail: '🏹 一支火箭裝備', isCorrect: false, bg: 'from-rose-600 to-red-700' }
+                ],
+                hint: '提示：小腦袋完全想通了，說「我知道」的知。'
+            },
+            {
+                id: 6,
+                audioText: '邊個係一支箭個支呀？',
+                questionText: '在裝備欄裝備上一「zi1 支」強力的追蹤長箭：',
+                robloxContext: '🏹 武器大師：拿出一支細細長長的遠程長箭！',
+                avatarType: 'roblox-arrow',
+                options: [
+                    { text: '知', detail: '🧠 知道密碼', isCorrect: false, bg: 'from-rose-600 to-red-700' },
+                    { text: '支', detail: '🏹 一支長箭 / 一支火把', isCorrect: true, bg: 'from-emerald-600 to-teal-700' }
+                ],
+                hint: '提示：用嚟數長條形武器，例如「一支部隊」或「一支筆」。'
+            },
+            {
+                id: 7,
+                audioText: '邊個係因為個因呀？',
+                questionText: '「jan1 為拿到了金鑰匙，所以順利打開寶箱」：',
+                robloxContext: '🔑 原因解鎖：因為有對應的鑰匙，所以得到金幣！',
+                avatarType: 'roblox-key',
+                options: [
+                    { text: '欣', detail: '😊 欣慰開心笑嘻嘻', isCorrect: false, bg: 'from-rose-600 to-red-700' },
+                    { text: '因', detail: '❔ 因為 / 事情的原因', isCorrect: true, bg: 'from-emerald-600 to-teal-700' }
+                ],
+                hint: '提示：用來解釋事情前因後果時講嘅「因為」。'
+            },
+            {
+                id: 8,
+                audioText: '邊個係欣賞個欣呀？',
+                questionText: '看見隊友蓋了非常漂亮的歐式城堡，我表示「jan1 欣」賞：',
+                robloxContext: '🏰 建築評分：高興地為隊友的優秀作品拍拍手！',
+                avatarType: 'roblox-happy',
+                options: [
+                    { text: '欣', detail: '😊 欣賞別人 / 歡欣高興', isCorrect: true, bg: 'from-emerald-600 to-teal-700' },
+                    { text: '因', detail: '❔ 因為所以', isCorrect: false, bg: 'from-rose-600 to-red-700' }
+                ],
+                hint: '提示：開高興興、心情好好去「欣賞」或者稱讚人哋。'
+            }
+        ];
+
+        function App() {
+            const [screen, setScreen] = useState('start'); 
+            const [currentIdx, setCurrentIdx] = useState(0);
+            const [score, setScore] = useState(0);
+            const [wrongAttempts, setWrongAttempts] = useState(0);
+            const [showHint, setShowHint] = useState(false);
+            const [feedback, setFeedback] = useState(null); 
+
+            const currentQuestion = QUESTION_POOL[currentIdx];
+
+            const playCantoneseSpeech = (text) => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'zh-HK';
+                    utterance.rate = 0.82; 
+                    utterance.pitch = 1.1;
+                    window.speechSynthesis.speak(utterance);
+                }
+            };
+
+            useEffect(() => {
+                if (screen === 'game' && currentQuestion) {
+                    const timer = setTimeout(() => {
+                        playCantoneseSpeech(currentQuestion.audioText);
+                    }, 400);
+                    return () => clearTimeout(timer);
+                }
+            }, [screen, currentIdx]);
+
+            const handleAnswer = (isCorrect) => {
+                if (feedback) return;
+
+                if (isCorrect) {
+                    setFeedback('correct');
+                    playCantoneseSpeech('答對了！好叻呀！');
+                    setScore(score + 1);
+                    setTimeout(() => {
+                        setFeedback(null);
+                        setWrongAttempts(0);
+                        setShowHint(false);
+                        if (currentIdx + 1 < QUESTION_POOL.length) {
+                            setCurrentIdx(currentIdx + 1);
+                        } else {
+                            setScreen('end');
+                        }
+                    }, 1500);
+                } else {
+                    setFeedback('wrong');
+                    playCantoneseSpeech('唔係呢個，再試一試？');
+                    const nextWrong = wrongAttempts + 1;
+                    setWrongAttempts(nextWrong);
+                    if (nextWrong >= 1) {
+                        setShowHint(true);
+                    }
+                    setTimeout(() => {
+                        setFeedback(null);
+                    }, 1200);
+                }
+            };
+
+            const restartGame = () => {
+                setCurrentIdx(0);
+                setScore(0);
+                setWrongAttempts(0);
+                setShowHint(false);
+                setFeedback(null);
+                setScreen('game');
+            };
+
+            return (
+                <div class="flex-1 flex flex-col justify-between p-4 bg-gradient-to-b from-slate-800 to-slate-950 text-white">
+                    
+                    {/* 開始畫面 */}
+                    {screen === 'start' && (
+                        <div class="flex-1 flex flex-col justify-between p-2 text-center">
+                            <div class="mt-8 space-y-3">
+                                <span class="bg-amber-400 text-slate-950 font-black px-4 py-1 rounded-full text-xs uppercase tracking-wider">Roblox 角色圖示版</span>
+                                <h1 class="text-3xl font-black text-amber-300">同音字特訓大挑戰</h1>
+                                <p class="text-sm text-slate-300 px-4">看著方塊人提示，聽語音，分辨 8 個核心中文字！</p>
+                            </div>
+                            <div class="my-auto flex flex-col items-center animate-bounce-slow gap-4">
+                                <div class="flex gap-2">
+                                    <RobloxAvatar type="noob-teacher" size="w-20 h-20" />
+                                    <RobloxAvatar type="noob-blue" size="w-20 h-20" />
+                                </div>
+                                <div class="text-sm bg-slate-950/40 px-4 py-1.5 rounded-full font-mono font-bold text-amber-400">
+                                    知/支 • 因/欣 • 獅/師 • 藍/男
+                                </div>
+                            </div>
+                            <button onClick={() => setScreen('game')} class="w-full py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-xl rounded-2xl shadow-lg active:scale-95 transition-all">
+                                🔊 聽住廣東話出發
+                            </button>
+                        </div>
+                    )}
+
+                    {/* 遊戲畫面 */}
+                    {screen === 'game' && (
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div class="flex justify-between items-center bg-slate-900/60 px-4 py-2 rounded-full text-xs font-bold">
+                                <span class="text-amber-400">關卡: {currentIdx + 1} / {QUESTION_POOL.length}</span>
+                                <span class="text-emerald-400">得分: {score}</span>
+                            </div>
+
+                            {/* 核心區：題目面板與角色動態視覺提示 */}
+                            <div class="bg-slate-900/90 border-2 border-slate-700 rounded-2xl p-4 my-2 text-center space-y-3 flex flex-col items-center">
+                                {/* 顯示與本關相關的 Roblox 角色圖像 */}
+                                <RobloxAvatar type={currentQuestion.avatarType} size="w-24 h-24" />
+                                
+                                <div class="space-y-1">
+                                    <p class="text-xs text-slate-400 font-bold tracking-wide">{currentQuestion.robloxContext}</p>
+                                    <h2 class="text-lg font-black text-white px-1 leading-snug">{currentQuestion.questionText}</h2>
+                                </div>
+                                
+                                <button onClick={() => playCantoneseSpeech(currentQuestion.audioText)} class="inline-flex items-center gap-2 px-5 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-full shadow-md active:scale-95 transition-all text-xs">
+                                    🔊 重播廣東話
+                                </button>
+                            </div>
+
+                            <div class="h-12 flex items-center justify-center text-center">
+                                {feedback === 'correct' && <span class="text-lg font-black text-emerald-400">🎉 太厲害了！答對了！</span>}
+                                {feedback === 'wrong' && <span class="text-lg font-black text-rose-400">❌ 睇清楚圖案，再試下！</span>}
+                                {!feedback && showHint && (
+                                    <div class="w-full bg-slate-900 border border-amber-400/40 text-amber-300 text-xs font-bold p-2 rounded-xl">
+                                        💡 {currentQuestion.hint}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* 大尺寸字卡 */}
+                            <div class="space-y-3 mb-1">
+                                {currentQuestion.options.map((opt, idx) => (
+                                    <button key={idx} onClick={() => handleAnswer(opt.isCorrect)} class={`w-full p-4 bg-gradient-to-r ${opt.bg} border-b-4 border-black/30 rounded-2xl active:border-b-0 active:scale-98 transition-all flex items-center justify-between shadow-lg`}>
+                                        <div class="flex flex-col text-left">
+                                            <span class="text-[10px] text-white/70 font-bold uppercase">對應意思</span>
+                                            <span class="text-base font-black text-white mt-0.5">{opt.detail}</span>
+                                        </div>
+                                        <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center text-3xl font-black text-white">
+                                            {opt.text}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 結算畫面 */}
+                    {screen === 'end' && (
+                        <div class="flex-1 flex flex-col justify-between text-center p-2">
+                            <div class="my-auto space-y-5">
+                                <div class="text-7xl animate-bounce">🏆</div>
+                                <h1 class="text-3xl font-black text-amber-300">🎉 8關全數通過！</h1>
+                                <p class="text-base text-slate-200 bg-slate-900/60 p-5 rounded-2xl border border-emerald-500/30 max-w-xs mx-auto leading-relaxed">
+                                    太棒了！你非常有耐性！<br />
+                                    成功通過全部 8 個挑戰！<br />
+                                    你已經完全分得清這 4 組字喇！
+                                </p>
+                            </div>
+                            <button onClick={restartGame} class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-xl rounded-2xl shadow-md active:scale-95 transition-all">
+                                🔄 重新大特訓
+                            </button>
+                        </div>
+                    )}
+
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
